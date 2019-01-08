@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Blazor.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using BlazorRedux;
+using FSharpLib;
 
 namespace SampleApp
 {
@@ -8,7 +9,16 @@ namespace SampleApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddReduxStore<MyState, IAction>(new MyState(), Reducers.RootReducer);
+            services.AddReduxStore<MyState, MyMsg>(
+                new MyState("", 0, null), 
+                MyFuncs.MyReducer, 
+                options =>
+                {
+                    options.LocationReducer = MyFuncs.LocationReducer;
+                    options.GetLocation = state => state.Location;
+                    options.StateSerializer = MyFuncs.StateSerializer;
+                    options.StateDeserializer = MyFuncs.StateDeserializer;
+}               );
         }
 
         public void Configure(IBlazorApplicationBuilder app)

@@ -10,7 +10,7 @@ namespace SampleApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddReduxStore<MyState, MyMsg>(
-                new MyState("", 0, null), 
+                new MyState("", 0, null, ""), 
                 MyFuncs.MyReducer, 
                 options =>
                 {

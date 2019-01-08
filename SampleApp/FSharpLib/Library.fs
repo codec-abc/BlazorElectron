@@ -37,19 +37,22 @@ type MyState =
         Location: string
         Count: int 
         Forecasts: WeatherForecast list option 
+        TextEditorContent : string
     }
 
     static member FromJson (_: MyState) = json {
         let! l = Json.read "Location"
         let! c = Json.read "Count"
         let! f = Json.read "Forecasts"
-        return { Location = l; Count = c; Forecasts = f }
+        let! t = Json.read "TextEditorContent"
+        return { Location = l; Count = c; Forecasts = f; TextEditorContent = t; }
     }
 
     static member ToJson (x: MyState) = json {
         do! Json.write "Location" x.Location
         do! Json.write "Count" x.Count
         do! Json.write "Forecasts" x.Forecasts
+        do! Json.write "TextEditorContent" x.TextEditorContent
     }
 
 type MyMsg =
@@ -57,6 +60,7 @@ type MyMsg =
     | IncrementByValue of n : int
     | ClearWeather
     | ReceiveWeather of r : WeatherForecast list
+    | SetTextEditorContent of c : string
 
 type MyAppComponent() =
     inherit ReduxComponent<MyState, MyMsg>()
@@ -68,6 +72,7 @@ module MyFuncs =
             | IncrementByValue n -> { state with Count = state.Count + n }
             | ClearWeather -> { state with Forecasts = None }
             | ReceiveWeather r -> { state with Forecasts = Some r }
+            | SetTextEditorContent c -> { state with TextEditorContent = c}
 
     let LocationReducer state (action: NewLocationAction) =
         { state with Location = action.Location }

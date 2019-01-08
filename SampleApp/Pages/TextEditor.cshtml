@@ -1,16 +1,21 @@
 @page "/texteditor"
+@inherits MyAppComponent
+@using FSharp
+@using FSharpLib
 
 <div>
     <label for="textarea">Textarea:</label>
 </div>
+
 <div>
-    <textarea 
+    <input 
         cols="40" 
         rows="8" 
-        name="textarea" 
-        id="textarea">
-
-    </textarea>
+        name="textarea"
+        id="textarea"
+        bind="@MyStrContent"
+        value=@State.TextEditorContent
+    />
 </div>
 
 <div>
@@ -20,9 +25,13 @@
 
 @functions 
 {
+    private string MyStrContent { get; set; }
+
     void OnSaveButtonClicked()
     {
-        Console.WriteLine("button clicked");
-        System.IO.File.WriteAllText(@"C:\Users\cviot\Desktop\test.txt", contents: "test");
+        Console.WriteLine("Saving " + MyStrContent + ".");
+        Dispatch(MyMsg.NewSetTextEditorContent(MyStrContent));
+        System.IO.File.WriteAllText(@"C:\Users\cviot\Desktop\test.txt", contents: @State.TextEditorContent);
     }
+
 }

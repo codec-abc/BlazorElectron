@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Blazor.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using BlazorRedux;
 
 namespace SampleApp
 {
@@ -7,6 +8,7 @@ namespace SampleApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddReduxStore<MyState, IAction>(new MyState(), Reducers.RootReducer);
         }
 
         public void Configure(IBlazorApplicationBuilder app)

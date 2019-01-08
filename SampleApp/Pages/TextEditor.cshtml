@@ -1,0 +1,28 @@
+@page "/texteditor"
+
+<div>
+    <label for="textarea">Textarea:</label>
+</div>
+<div>
+    <textarea 
+        cols="40" 
+        rows="8" 
+        name="textarea" 
+        id="textarea">
+
+    </textarea>
+</div>
+
+<div>
+    <button onclick="@OnSaveButtonClicked">Save file!</button>
+</div>
+
+
+@functions 
+{
+    void OnSaveButtonClicked()
+    {
+        Console.WriteLine("button clicked");
+        System.IO.File.WriteAllText(@"C:\Users\cviot\Desktop\test.txt", contents: "test");
+    }
+}

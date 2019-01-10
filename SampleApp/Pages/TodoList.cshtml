@@ -1,0 +1,95 @@
+@page "/todolist"
+@inherits MyAppComponent
+@using FSharp
+@using FSharpLib
+
+<div>
+    <button onclick="@(() => AddTodo())" class="oi oi-plus" >Add Todo</button>
+</div>
+
+<ul>
+    @foreach (var todo in todos)
+    {
+        <div>
+            <input type="text" bind="@todo.Title" />
+            <input type="checkbox" bind="@todo.IsDone"/>
+            <button onclick="@(() => DeleteTodoItem(todo))">Delete</button>
+        </div>
+    }
+</ul>
+
+<div>
+    <input type="file" onchange="@Load" ref="inputFile" class="oi oi-external-link"/> 
+</div>
+
+<div>
+    <button onclick=@Save class="oi oi-data-transfer-download"></button>
+</div>
+
+@functions 
+{
+    public class TodoItem  {
+        public string Title;
+        public bool IsDone;
+
+        public TodoItem(string a, bool b) {
+            Title = a;
+            IsDone = b;
+        }
+    }
+
+    ElementRef inputFile;
+    List<TodoItem> todos = new List<TodoItem>();
+    
+    async void Load() 
+    {
+        var path = await JSRuntime.Current.InvokeAsync<string>("helpers.getFilePath", inputFile);
+        try 
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                ParseFileAndSetTodos(path);
+            }
+        } 
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
+    void ParseFileAndSetTodos(string path)
+    {
+        todos = Todos.parseFile(path).Select(a => new TodoItem(a.Title, a.IsDone)).ToList();
+        base.StateHasChanged();
+    }
+
+    void DeleteTodoItem(TodoItem item)
+    {
+        todos.Remove(item);
+        base.StateHasChanged();
+    }
+
+    void AddTodo()
+    {
+        todos.Add(new TodoItem("", false));
+        base.StateHasChanged();
+    }
+
+    async void Save() 
+    {
+        var contentAsString = 
+            Todos.serialize
+            (
+                todos
+                    .Select(a => new Todos.TodoItem(a.Title, a.IsDone))
+                    .ToList()
+            );
+
+        var path = await JSRuntime.Current.InvokeAsync<string>("helpers.showSaveDialog", "test");
+            
+        if (!string.IsNullOrEmpty(path))
+        {
+            System.IO.File.WriteAllText(path: path, contents: contentAsString);
+        }
+    }
+}

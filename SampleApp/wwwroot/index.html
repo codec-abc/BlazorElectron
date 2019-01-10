@@ -7,10 +7,16 @@
     <base href="./" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
+    <script src="js/helpers.js" type="text/javascript"></script>
 </head>
 <body>
     <app>Loading...</app>
 
     <script src="../bin/Debug/netcoreapp2.1/dist/_content/BlazorElectron/blazor.electron.js"></script>
+    <script type="text/javascript">
+        var remote = require('electron').remote;
+        remote.getCurrentWindow().toggleDevTools();
+        remote.getCurrentWindow().maximize();
+    </script>
 </body>
 </html>

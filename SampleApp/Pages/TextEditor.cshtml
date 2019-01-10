@@ -14,7 +14,7 @@
         name="textarea"
         id="textarea"
         bind="@MyStrContent"
-        value=@State.TextEditorContent
+        onkeyup="(this.dispatchEvent(new CustomEvent('change', { bubbles: true })))" 
     />
 </div>
 
@@ -25,12 +25,24 @@
 
 @functions 
 {
-    private string MyStrContent { get; set; }
+    private string _myStrContent = "";
+
+    private string MyStrContent 
+    { 
+        get
+        {
+            return _myStrContent;
+        }
+        set
+        {
+            _myStrContent = value;
+            Dispatch(MyMsg.NewSetTextEditorContent(MyStrContent));
+        }
+    }
 
     void OnSaveButtonClicked()
     {
         Console.WriteLine("Saving " + MyStrContent + ".");
-        Dispatch(MyMsg.NewSetTextEditorContent(MyStrContent));
         System.IO.File.WriteAllText(@"C:\Users\cviot\Desktop\test.txt", contents: @State.TextEditorContent);
     }
 
